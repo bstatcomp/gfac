@@ -4,8 +4,14 @@
 \alias{likelihood_cl}
 \title{Calculate the likelihood for the FA and gFA models}
 \usage{
-likelihood_cl(test, pred, tr_fa, logl = TRUE, integrate = FALSE,
-  truncate = FALSE)
+likelihood_cl(
+  test,
+  pred,
+  tr_fa,
+  logl = TRUE,
+  integrate = FALSE,
+  truncate = FALSE
+)
 }
 \arguments{
 \item{test}{data frame. Test data set for evaluation.}
