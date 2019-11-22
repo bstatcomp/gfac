@@ -35,7 +35,7 @@ train_CgPFA <- function (train, gp_train, nfac = 2, ...) {
                     ng = max(g),
                     X  = X)
   blr      <- rstan::sampling(stanmodels$gPFA, data = stan_data, ...)
-  ext      <- extract(blr)
+  ext      <- rstan::extract(blr)
   lambda   <- apply(ext$Psi, MARGIN = c(2,3), FUN = median)
   factors  <- apply(ext$Theta, MARGIN = c(2,3), FUN = median)
 
@@ -61,7 +61,7 @@ train_CgPFA <- function (train, gp_train, nfac = 2, ...) {
   blr2    <- rstan::sampling(stanmodels$corr_est,
                              data   = stan_data,
                              ...)
-  ext     <- extract(blr2)
+  ext     <- rstan::extract(blr2)
   sig_est <- apply(ext$Sigma, c(2,3), median)
   return (list(train    = train,
                gp_train = gp_train,
