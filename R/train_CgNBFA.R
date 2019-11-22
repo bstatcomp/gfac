@@ -38,7 +38,7 @@ train_CgNBFA <- function (train, gp_train, nfac = 2, ...) {
                     ng = max(g),
                     X  = X)
   blr      <- rstan::sampling(stanmodels$gNBFA, data = stan_data, ...)
-  ext      <- extract(blr)
+  ext      <- rstan::extract(blr)
   lambda   <- apply(ext$Psi, MARGIN = c(2,3), FUN = median)
   factors  <- apply(ext$Theta, MARGIN = c(2,3), FUN = median)
   mu       <- apply(ext$mu, MARGIN = c(2,3), FUN = median)
