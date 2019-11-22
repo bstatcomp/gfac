@@ -1,0 +1,38 @@
+#' League of Legends data
+#'
+#' A data set containing the LCK statistics for the summer 2018 season.
+#'
+#' \itemize{
+#'     \item{K}{Champion kills}
+#'     \item{D}{Champion deaths}
+#'     \item{DK}{dragon kills}
+#'     \item{TK}{tower kills}
+#'     \item{BK}{baron kills}
+#'     \item{DMG}{damage to Champions}
+#'     \item{WD}{wards}
+#'     \item{WDK}{ward kills}
+#'     \item{GD}{gold earned}
+#'     \item{MIK}{minion kills}
+#'     \item{MOK}{monster kills}
+#'     \item{MOKOJ}{monster kills own jungle}
+#'     \item{MOKEJ}{monster kills enemy jungle}
+#'     \item{GD10}{earned gold after 10 minutes}
+#'     \item{XP10}{experience after 10 minutes}
+#'     \item{CS10}{creep score after 10 minutes}
+#' }
+#'
+#'
+#' @name LCK_data
+#' @format A list with four elements.
+#'   \describe{
+#'     \item{fa_data}{A data frame with 494 rows and 16 columns.}
+#'     \item{group}{A vector of team names for each observation.}
+#'     \item{splits}{A data frame with one column which represent a
+#'     time-respecting data split (first half of 2018 summer season
+#'     for train, and the second half for test). 2 stands for the train
+#'     observations and 1 stands for test observations.}
+#'     \item{sup_data}{A data frame with one column which represents the
+#'     datetime of the game.}
+#'   }
+#' @source \url{https://oracleselixir.com/}
+NULL
