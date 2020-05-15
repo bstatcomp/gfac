@@ -55,7 +55,7 @@ test_grp  <- EPL_data$group[test_ind]
 
 my_model <- train_CgNBFA(train_dat, train_grp)
 my_eval  <- pred_CgNBFA(my_model, test_grp, test_dat)
-mean(my_eval$likelihoods)
+mean(my_eval$lpd)
 my_eval$predictions # get predictions for all observations in the test set
 ``` 
 

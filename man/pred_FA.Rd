@@ -4,7 +4,7 @@
 \alias{pred_FA}
 \title{Predict from FA model}
 \usage{
-pred_FA(tr_fa, gp_test, test, logl = T, L_intg = F)
+pred_FA(tr_fa, gp_test, test)
 }
 \arguments{
 \item{tr_fa}{An object resulting from \code{train_FA}.}
@@ -12,14 +12,6 @@ pred_FA(tr_fa, gp_test, test, logl = T, L_intg = F)
 \item{gp_test}{vector. Groups for each observation.}
 
 \item{test}{data frame. Test data set for evaluation.}
-
-\item{logl}{logical. Return log-likelihood? Defaults to TRUE.}
-
-\item{L_intg}{logical. Should the likelihood be integrated across
-suitable borders? Defaults to FALSE, which uses an approximation with
-MVN density.
-Special care needs to be taken when integrating, as the likelihood is
-likely to be 0 in higher dimensions due to machine precision.}
 }
 \value{
 A list.

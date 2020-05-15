@@ -25,7 +25,7 @@
 #'   \describe{
 #'     \item{fa_data}{A data frame with 43814 rows and 15 columns.}
 #'     \item{group}{A vector of team names for each observation.}
-#'     \item{splits}{A data frame with three columns which represent
+#'     \item{splits}{A data frame with four columns which represent
 #'     time-respecting data splits. 2 stands for the train
 #'     observations and 1 stands for test observations.}
 #'     \item{sup_data}{A data frame with three columns which represent the date

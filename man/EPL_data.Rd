@@ -20,7 +20,7 @@
 A data set containing the EPL statistics for several seasons.
 }
 \details{
-#' \itemize{
+\itemize{
     \item{FTHG}{home goals}
     \item{FTAG}{away goals}
     \item{HS}{home shots}

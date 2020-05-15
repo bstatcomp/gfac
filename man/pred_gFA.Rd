@@ -4,7 +4,7 @@
 \alias{pred_gFA}
 \title{Predict from grouped FA model}
 \usage{
-pred_gFA(tr_fa, gp_test, test, logl = T, L_intg = F)
+pred_gFA(tr_fa, gp_test, test)
 }
 \arguments{
 \item{tr_fa}{An object resulting from \code{train_gFA}.}
@@ -12,19 +12,13 @@ pred_gFA(tr_fa, gp_test, test, logl = T, L_intg = F)
 \item{gp_test}{vector. Groups for each observation.}
 
 \item{test}{data frame. Test data set for evaluation.}
-
-\item{L_intg}{logical. Should the likelihood be integrated across
-suitable borders? Defaults to FALSE, which uses an approximation with
-MVN density.
-Special care needs to be taken when integrating, as the likelihood is
-likely to be 0 in higher dimensions due to machine precision.}
 }
 \value{
 A list.
   \item{predictions}{A numeric vector of predictions for all observations
   in the test set.}
-  \item{log_lik}{A numeric vector of (log-)likelihoods for all observations
-  in the test set.}
+  \item{lpd}{A numeric vector of log predictive densities for all
+  observations in the test set.}
 }
 \description{
 This function predicts based on the estimation of the gFA

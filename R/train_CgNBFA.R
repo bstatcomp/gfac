@@ -73,5 +73,5 @@ train_CgNBFA <- function (train, gp_train, nfac = 2, ...) {
                mu       = mu,
                phi      = size,
                Sigma    = sig_est,
-               stan_mod = list("PFA" = blr, "Copula" = blr2)))
+               stan_mod = list("NBFA" = blr, "Copula" = blr2)))
 }

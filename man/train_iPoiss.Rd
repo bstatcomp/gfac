@@ -18,6 +18,8 @@ A list.
   combination. Rows represent groups, columns represent variables.}
   \item{train}{Train data set.}
   \item{gp_train}{Groups of the train data set.}
+  \item{alpha}{Matrix of posterior shape parameters.}
+  \item{beta}{Matrix of posterior scale parameters.}
 }
 \description{
 This function trains an independent Poisson model for multivariate

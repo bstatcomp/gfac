@@ -4,7 +4,7 @@
 \alias{pred_CgPFA}
 \title{Predict from CgPFA model}
 \usage{
-pred_CgPFA(tr_fa, gp_test, test, logl = T)
+pred_CgPFA(tr_fa, gp_test, test)
 }
 \arguments{
 \item{tr_fa}{An object resulting from \code{train_CgPFA}.}
@@ -12,14 +12,12 @@ pred_CgPFA(tr_fa, gp_test, test, logl = T)
 \item{gp_test}{vector. Groups for each observation.}
 
 \item{test}{data frame. Test data set for evaluation.}
-
-\item{logl}{logical. Return log-likelihood? Defaults to TRUE.}
 }
 \value{
 A list.
   \item{predictions}{A numeric vector of predictions for all observations
   in the test set.}
-  \item{likelihoods}{A numeric vector of (log-)likelihoods for all
+  \item{lpd}{A numeric vector of log predictive densities for all
   observations in the test set.}
 }
 \description{

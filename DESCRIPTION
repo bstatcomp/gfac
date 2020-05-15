@@ -1,12 +1,12 @@
 Package: gfac
 Title: Grouped factor analysis with copulas
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: 
     person(given = "Gregor",
            family = "Pirs",
            role = c("aut", "cre"),
            email = "gregor.pirs@fri.uni-lj.si")
-Description: The package contains several factor analysis methods, with emphasis to count data. The main methods rely on copulas to estimate the residual covariance, not explained by the latent structure. Additionally, the package contains four data sets for empirical evaluation and one baseline model. The methods use RStan for inference, the only exception is the iPoiss method where we use conjugate posterior.
+Description: The package contains several factor analysis methods, with emphasis to count data. The main methods rely on copulas to estimate the residual covariance, not explained by the latent structure. Additionally, the package contains six data sets for empirical evaluation. The methods use RStan for inference, the only exception is the iPoiss method where we use conjugate posterior.
 License: GPL (>=3)
 Encoding: UTF-8
 LazyData: true
@@ -14,6 +14,7 @@ Biarch: true
 Depends: 
     R (>= 3.4.0),
     plyr,
+    dplyr,
     tmvtnorm
 Imports: 
     methods,
