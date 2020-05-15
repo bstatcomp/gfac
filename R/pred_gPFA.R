@@ -23,7 +23,6 @@ pred_gPFA <- function (tr_fa, gp_test, test) {
   nit     <- dim(ext$Theta)[1]
   log_lik <- vector(mode = "numeric", length = nrow(test))
   for (i in 1:nrow(test)) {
-    print(paste0("Test: ", i))
     tmp    <- 0
     tmp_gp <- gp_test[i]
     my_mus <- matrix(data = NA, nrow = nit, ncol = ncol(test))
