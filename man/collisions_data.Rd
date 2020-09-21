@@ -22,7 +22,6 @@ factors.
 }
 \details{
 \itemize{
-    \item{M2FG}{2-point field goals made}
     \item{Alcohol involvement}
     \item{Aggressive driving/Road rage}
     \item{Backing unsafely}
