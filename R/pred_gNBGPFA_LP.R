@@ -14,7 +14,7 @@
 #' @param transform_t function. Function for the transformation of the time-series (for example if we want it on a specific interval).
 #' @return A list.
 #' \item{data}{Generated quantities for test data.}
-#' \item{LS}{Point-wise log scores.}
+#' \item{log_scores}{Point-wise log scores.}
 pred_gNBGPFA_LP <- function (mod, X_test, ts_test, gp_test, ts_train, gp_train, transform_t, period_length) {
   # Generate quantities
   orig_ts_test  <- ts_test

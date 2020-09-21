@@ -60,9 +60,9 @@ train_gNBGPFA_LP <- function (X, ts, gp, nfac, nit, nchain, period_length,
     p_val           = c(prior_r2, prior_r3, prior_phi),
     period_length   = period_length
   )
-  stan_mod <- get_stan_compiled("gNBGPFA_LP")
+  # stan_mod <- get_stan_compiled("gNBGPFA_LP")
   if (!is.null(tseed)) {
-    samps    <- rstan::sampling(stan_mod,
+    samps    <- rstan::sampling(stanmodels$gNBGPFA_LP,
                                 stan_data,
                                 seed = tseed,
                                 chains = nchain,

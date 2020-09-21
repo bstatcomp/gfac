@@ -1,23 +1,39 @@
-gNBGPFAC_LP_predict <- function (mod, X_test, ts_test, gp_test, ts_train, gp_train, other_pars = NULL) {
+#' Evaluates a negative binomial Gaussian process factor analysis with copula
+#' This function evaluates a negative binomial Gaussian process factor analysis with copula on test data. Additionally,
+#' it provides generated quantities for the test data.
+#'
+#' @export
+#' @param mod list. Output of \code{train_gNBGPFAC_LP}.
+#' @param X_test data frame. The test data set, consisting of counts. Columns represent variables, rows represent observations.
+#' @param ts_test vector. Time-points of observations in X_test.
+#' @param ts_train vector. Time-points of observations in X_train.
+#' @param gp_test vector. Groups for each observation in the test set.
+#' @param gp_train vector. Groups for each observation in the train set.
+#' @param period_length numeric. Length of the period.
+#' @param transform_t function. Function for the transformation of the time-series (for example if we want it on a specific interval).
+#' @return A list.
+#' \item{data}{Generated quantities for test data.}
+#' \item{log_scores}{Point-wise log scores.}
+pred_gNBGPFAC_LP <- function (mod, X_test, ts_test, gp_test, ts_train, gp_train, transform_t, period_length) {
   # Generate quantities
   orig_ts_test  <- ts_test
   orig_ts_train <- ts_train
 
-  ts_test  <- other_pars$transform_t(ts_test)
-  ts_train <- other_pars$transform_t(ts_train)
-  
+  ts_test  <- transform_t(ts_test)
+  ts_train <- transform_t(ts_train)
+
   test_map  <- data.frame(orig = orig_ts_test, trans = ts_test)
   train_map <- data.frame(orig = orig_ts_train, trans = ts_train)
-  
+
   lpk_kernel <- function (x1, x2, a2, r2, r3) {
     x1_mat <- matrix(data = x1, ncol = length(x2), nrow = length(x1))
     x2_mat <- matrix(data = x2, ncol = length(x2), nrow = length(x1), byrow = T)
-    k      <- a2 * 
-      exp(-2 * (sin(pi * abs(x1_mat - x2_mat) / other_pars$period_length))^2 / r2^2) *
+    k      <- a2 *
+      exp(-2 * (sin(pi * abs(x1_mat - x2_mat) / period_length))^2 / r2^2) *
       exp(-(x1_mat - x2_mat)^2/ (2 * r3^2))
     return (k)
   }
-  
+
   get_pred <- function (x_star, x, y, sK, a1, a2, r1, r2, r3) {
     K_star_lpk    <- lpk_kernel(x_star, x, a2, r2, r3)
     K_star        <- K_star_lpk
@@ -28,21 +44,21 @@ gNBGPFAC_LP_predict <- function (mod, X_test, ts_test, gp_test, ts_train, gp_tra
     tmp           <- f2_mu
     return(tmp)
   }
-  
+
   tmp  <- mod
   tmod <- tmp$samps
   df   <- tmp$data
-  
+
   ## extract model and get dimension
   ext   <- rstan::extract(tmod)
   nit   <- dim(ext$simp)[1]
   gmaps <- tmp$gmap
-  
+
   ## predicted values
   f2     <- array(data = NA, dim = c(nit, df$P, length(ts_train) + length(ts_test)))
   theta2 <- array(data = NA, dim = c(nit, df$P, length(ts_train) + length(ts_test)))
   mu2    <- array(data = NA, dim = c(nit, df$M, length(ts_train) + length(ts_test)))
-  
+
   gmaps <- gmaps[order(gmaps$ind), ] # ordered the same as in train
   for (i in 1:nit) {
     print(paste0("Iteration: ", i))
@@ -63,7 +79,7 @@ gNBGPFAC_LP_predict <- function (mod, X_test, ts_test, gp_test, ts_train, gp_tra
       ts_tr    <- df$t[ind_train]
       g_ind    <- c((gp_train == g), (gp_test == g))
       for (p in 1:df$P) {
-        
+
         fn_train  <- ext$fn[i, p, ind_train]
         x2        <- ts_new
         x1        <- ts_tr
@@ -76,8 +92,8 @@ gNBGPFAC_LP_predict <- function (mod, X_test, ts_test, gp_test, ts_train, gp_tra
         K         <- K2
         diag(K)   <- diag(K) + sigma_tmp
         sK        <- solve(K, tol = 1e-40)
-        f2_tmp <- sapply(x2, 
-                         get_pred, 
+        f2_tmp <- sapply(x2,
+                         get_pred,
                          x     = x1,
                          y     = y1,
                          sK    = sK,
@@ -86,7 +102,7 @@ gNBGPFAC_LP_predict <- function (mod, X_test, ts_test, gp_test, ts_train, gp_tra
                          r3    = r3_tmp)
         f2[i,p,g_ind]     <- f2_tmp
         theta2[i,p,g_ind] <- f2[i,p,g_ind]
-        
+
       }
       base     <- ext$base
       base_tmp <- base[i,ind_map, ]
@@ -103,8 +119,8 @@ gNBGPFAC_LP_predict <- function (mod, X_test, ts_test, gp_test, ts_train, gp_tra
                   gp     = c(as.character(gp_train), as.character(gp_test)),
                   t_maps = tmaps)
   mod <- list(trained_model = tmp, generated_quantities = gq_pars)
-  
-  
+
+
   # Evaluate
   ghk_cop <- function (u, L, y, mu, phi) {
     K       <- length(u)
@@ -133,17 +149,17 @@ gNBGPFAC_LP_predict <- function (mod, X_test, ts_test, gp_test, ts_train, gp_tra
     if (is.nan(out)) out <- 0
     return (out)
   }
-  
+
   test_df <- data.frame(ts = ts_test, gp = gp_test)
   gqs <- mod$generated_quantities
   ext <- rstan::extract(mod$trained_model$samps)
-  
+
   L1   <- ext$L
   phis <- ext$phi
   mus1 <- gqs$mu2
   ts   <- gqs$ts
   gp   <- gqs$gp
-  
+
   n   <- dim(mus1)[3]
   nit <- dim(mus1)[1]
   LS_mat  <- matrix(data = NA, nrow = nrow(X_test), ncol = nit)
@@ -162,24 +178,24 @@ gNBGPFAC_LP_predict <- function (mod, X_test, ts_test, gp_test, ts_train, gp_tra
       tmp_ll <- vector(mode = "numeric", length = nit2)
       for (k in 1:nit2) {
         u         <- runif(nrow(L), 0, 1)
-        tmp_ll[k] <- ghk_cop(u, 
-                             L, 
-                             as.numeric(X_test[j, ]), 
-                             as.numeric(X_pred[j, ]), 
+        tmp_ll[k] <- ghk_cop(u,
+                             L,
+                             as.numeric(X_test[j, ]),
+                             as.numeric(X_pred[j, ]),
                              phis[i, ])
         if (is.nan(mean(tmp_ll[k]))) browser()
-        a <- ghk_cop(u, 
-                     L, 
-                     as.numeric(X_test[j, ]), 
-                     as.numeric(X_pred[j, ]), 
+        a <- ghk_cop(u,
+                     L,
+                     as.numeric(X_test[j, ]),
+                     as.numeric(X_pred[j, ]),
                      phis[i, ])
       }
       sc[j] <- mean(tmp_ll)
     }
     LS_mat[ ,i]  <- sc
   }
-  LS     <- log(apply(LS_mat, 1, mean))
-  
+  log_score <- log(apply(LS_mat, 1, mean))
+
   return (list(trained_model = tmp$trained_model,
                generated_quantities = gq_pars,
                log_scores = LS))

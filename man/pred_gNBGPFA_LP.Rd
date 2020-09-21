@@ -35,7 +35,7 @@ pred_gNBGPFA_LP(
 \value{
 A list.
 \item{data}{Generated quantities for test data.}
-\item{LS}{Point-wise log scores.}
+\item{log_scores}{Point-wise log scores.}
 }
 \description{
 This function evaluates a negative binomial Gaussian process factor analysis model on test data. Additionally,
