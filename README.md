@@ -56,6 +56,7 @@ my_eval  <- pred_CgNBFA(my_model, test_grp, test_dat)
 These methods are an extension of static factor models. The latent factors are further modeled with smooth locally periodic Gaussian processes. Below is an example of fitting gNBGPFA and gNBGPFAC to a toy data set.
 ```{r eval = FALSE}
 data(toy_A)
+toy_A     <- data_out
 train_ind <- toy_A$splits[ ,1] == 0
 
 
@@ -72,14 +73,14 @@ trained_mod <- train_gNBGPFA_LP(X = toy_A$df[train_ind, ],
                                 prior_phi_type = 1,
                                 prior_phi = c(1, 0.01),
                                 transform_t = function (t) return (t))
-predicted_mod <- predict_gNBGPFA_LP(mod = trained_mod, 
-                                    X_test = toy_A$df[!train_ind, ], 
-                                    ts_test = toy_A$ts[!train_ind], 
-                                    gp_test = toy_A$gp[!train_ind], 
-                                    ts_train = toy_A$ts[train_ind], 
-                                    gp_train = toy_A$gp[train_ind],
-                                    transform_t = function (t) return (t),
-                                    period_length = 2)
+predicted_mod <- pred_gNBGPFA_LP(mod = trained_mod, 
+                                 X_test = toy_A$df[!train_ind, ], 
+                                 ts_test = toy_A$ts[!train_ind], 
+                                 gp_test = toy_A$gp[!train_ind], 
+                                 ts_train = toy_A$ts[train_ind], 
+                                 gp_train = toy_A$gp[train_ind],
+                                 transform_t = function (t) return (t),
+                                 period_length = 2)
 
 
 # gNBGPFAC

@@ -28,25 +28,25 @@ train_gNBGPR_LP <- function (X, ts, gp, nfac, nit, nchain, period_length,
                               transform_t, tseed = NULL,...) {
   tmp <- bind_cols(as.data.frame(X), ts = ts, group = gp) %>%
     arrange(group)
-  
+
   n <- nrow(X)
   m <- ncol(X)
   p <- nfac
-  
+
   X_ar <- dplyr::select(tmp, - c(ts, group)) %>%
     as.matrix()
-  
+
   g <- count(tmp, group) %>%
     dplyr::select(n) %>%
     unlist() %>%
     as.vector()
   gmap <- count(tmp, group) %>%
     bind_cols(ind = 1:length(g))
-  
+
   # rescale time-series
   t_ar       <- transform_t(tmp$ts)
-  
-  
+
+
   stan_data  <- list(
     N      = n,
     NG     = length(g),
@@ -55,7 +55,7 @@ train_gNBGPR_LP <- function (X, ts, gp, nfac, nit, nchain, period_length,
     t      = t_ar,
     G      = as.array(g),
     X      = t(X_ar),
-    
+
     p_dist          = c(1, 1, prior_phi_type),
     p_val           = c(prior_r2, prior_r3, prior_phi),
     period_length   = period_length
@@ -68,14 +68,14 @@ train_gNBGPR_LP <- function (X, ts, gp, nfac, nit, nchain, period_length,
                                 iter = nit,
                                 ...)
   } else {
-    samps    <- rstan::sampling(stan_mod,
+    samps    <- rstan::sampling(stanmodels$gNBGPR_LP,
                                 stan_data,
                                 seed = 1,
                                 chains = nchain,
                                 iter = nit,
                                 ...)
   }
-  
+
   out_list <- list(data   = stan_data,
                    samps  = samps,
                    gmap   = gmap)

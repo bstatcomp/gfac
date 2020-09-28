@@ -69,7 +69,7 @@ train_gNBGPFA_LP <- function (X, ts, gp, nfac, nit, nchain, period_length,
                                 iter = nit,
                                 ...)
   } else {
-    samps    <- rstan::sampling(stan_mod,
+    samps    <- rstan::sampling(stanmodels$gNBGPFA_LP,
                                 stan_data,
                                 seed = 1,
                                 chains = nchain,
