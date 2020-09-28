@@ -20,6 +20,7 @@
 #' \item{data}{Data that goes into sampling.}
 #' \item{samps}{An object of S4 class \code{stanfit}. Samples.}
 #' \item{gmap}{Mapping of groups to indexes.}
+#' \item{orig_X}{Original X.}
 train_gMVNGPFA_LP <- function (X, ts, gp, nfac, nit, nchain, period_length,
                             prior_r2, prior_r3,
                             transform_t, tseed = NULL,...) {

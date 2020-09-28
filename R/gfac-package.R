@@ -1,6 +1,9 @@
 #' The 'gfac' package.
 #'
-#' @description A DESCRIPTION OF THE PACKAGE
+#' @description The package contains several factor analysis methods, with
+#' emphasis to count data. The main methods rely on copulas to estimate the
+#' residual covariance, not explained by the latent structure. Additionally, the
+#' package contains several data sets for empirical evaluation. Methods use RStan for inference.
 #'
 #' @docType package
 #' @name gfac-package
