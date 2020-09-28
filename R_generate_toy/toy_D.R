@@ -1,8 +1,9 @@
-# Overdispersed NB# Poisson z low count-i
+# Poisson z low count-i
 
 my_path <- dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(my_path)
 setwd("..")
+
 
 # Functions
 se_kernel <- function(x, y, alpha1 = 1, rho1) {
@@ -42,46 +43,44 @@ library(tidyr)
 
 # 2 latent dimensions, governed by a Gaussian process --------------------------
 x  <- seq(0.1, 20, by = 0.1)
-F1 <- draw_samples(x, 1, seed = 2, se_kernel, alpha1 = 5, rho1 = 4 * 2)
-F2 <- draw_samples(x, 1, seed = 10, p_kernel, alpha2 = 5, rho2 = 2 * 2)
-F3 <- draw_samples(x, 1, seed = 12, se_kernel, alpha1 = 5, rho1 = 5 * 2)
-F4 <- draw_samples(x, 1, seed = 42, se_kernel, alpha1 = 5, rho1 = 3 * 2)
-F5 <- draw_samples(x, 1, seed = 23, lp_kernel, alpha2 = 1, rho2 = 5, rho3 =3)
-F5 <- draw_samples(x, 1, seed = 23, p_kernel, alpha2 = 1, rho2 = 5)
-F6 <- draw_samples(x, 1, seed = 21, se_kernel, alpha1 = 5, rho1 = 6 * 2)
+F1 <- draw_samples(x, 1, seed = 2, se_kernel, alpha1 = 0.5, rho1 = 4 * 2)
+F2 <- draw_samples(x, 1, seed = 10, lp_kernel, alpha2 = 0.5, rho2 = 2 * 2, rho3 = 7 * 2)
+F3 <- draw_samples(x, 1, seed = 10, p_kernel, alpha2 = 20, rho2 = 6 * 2)
+F4 <- draw_samples(x, 1, seed = 42, se_kernel, alpha1 = 0.5, rho1 = 3 * 2)
+F5 <- draw_samples(x, 1, seed = 21, lp_kernel, alpha2 = 0.5, rho2 = 1 * 2, rho3 = 8 * 2)
+F6 <- draw_samples(x, 1, seed = 10, p_kernel, alpha2 = 20, rho2 = 5 * 2)
 
-plot(F1, type = "l")
-plot(F2 * 4, type = "l")
-# plot(-1.5 * F2, type = "l")
-plot(F3, type = "l")
-plot(F4, type = "l")
-plot(F5 * 4, type = "l")
-plot(F6, type = "l")
+plot(F1, type = "l", ylim = c(-2,2))
+plot(F2, type = "l", ylim = c(-2,2))
+plot(F3, type = "l", ylim = c(-2,2))
+plot(F4, type = "l", ylim = c(-2,2))
+plot(F5, type = "l", ylim = c(-2,2))
+plot(F6, type = "l", ylim = c(-2,2))
 
 
-F_mat <- as.matrix(data.frame(D1 = c(F1, F4), D2 = c(F2 * 4, F5 * 4), D3 = c(F3, F6)))
+F_mat <- as.matrix(data.frame(D1 = c(F1, F4), D2 = c(F2, F5), D3 = c(F3, F6)))
 
 # we also need base measure
 
 
 # Generate X from the loading matrix -------------------------------------------
 # loadings 10 x 3
-L_mat <- matrix(c(1, 0, -0.5,
-                  1, 0, 0,
-                  0.1, 0.1, 1,
+L_mat <- matrix(c(1, 0, 0,
+                  0.1, 0.1, -0.3,
                   -1, 1, 0,
-                  1.5, 0, 1,
-                  -2, -1, 0,
-                  1.2, 1, 0,
-                  0, -1.5, 0,
-                  1, 1, 1,
-                  0, 0.6, -1.2),
+                  1.5, 0, 0.5,
+                  -2, -1, 1,
+                  1.2, 1, -0.4,
+                  0, -1.5, 1,
+                  1, 1, 0.3,
+                  0, 0.6, 0),
                 ncol = 3,
                 byrow = T)
 X               <- t(L_mat %*% t(F_mat))
-set.seed(1)
-minX            <- rnorm(10, 50, 5)
-X               <- sweep(X * 5, 2, minX, "+")
+minX            <- apply(X, 2, min)
+minX            <- rnorm(9, 50, 5)
+# minX[minX >= 0] <- 0
+X               <- sweep(X * 4, 2, minX, "+")
 
 
 X_tmp <- as.data.frame(X)
@@ -94,13 +93,13 @@ x1_ol <- cbind(x_out_long, type = "mean")
 
 # Poisson likelihood -----------------------------------------------------------
 set.seed(1)
-cor_mat <- diag(1, nrow = 10)
+cor_mat <- diag(1, nrow = 9)
 cor_mat[1,2]  <- 0.4
 cor_mat[2,1]  <- 0.4
 cor_mat[1,4]  <- -0.3
 cor_mat[4,1]  <- -0.3
-cor_mat[2,10] <- 0.6
-cor_mat[10,2] <- 0.6
+cor_mat[2,9] <- 0.6
+cor_mat[9,2] <- 0.6
 cor_mat[3,6]  <- -0.8
 cor_mat[6,3]  <- -0.8
 cor_mat[6,7]  <- 0.7
@@ -109,27 +108,23 @@ cor_mat[7,6]  <- 0.7
 
 ## random covariance
 set.seed(1)
-A <- matrix(rnorm(100), nrow = 10)
+A <- matrix(rnorm(81), nrow = 9)
 B <- A %*% t(A)
 cor_mat <- cov2cor(B)
 cor_mat[abs(cor_mat) < 0.3] <- 0
 cor_mat <- Matrix::nearPD(cor_mat)$mat
 
-phi <- rep(100, 10)
-
-gaussianC_nb <- function(cor_mat, mu){
+gaussianC_p <- function(cor_mat, mu){
   M  <- length(mu)
   vX <- mvrnorm(1, rep(0, M), cor_mat)
   vU <- pnorm(vX)
   lY <- vector(length = M)
-  lY <- qpois(vU, lambda = mu)
+  lY <- qpois(vU, mu)
   return(lY)
 }
-
-
 X_out <- X
 for (i in 1:nrow(X_out)) {
-  X_out[i, ] <- gaussianC_nb(cor_mat, X[i, ])
+  X_out[i, ] <- gaussianC_p(cor_mat, X[i, ])
 }
 
 
@@ -146,11 +141,10 @@ x2_ol <- cbind(x_out_long, type = "Poisson")
 ## Poisson vs mean
 dft <- rbind(x1_ol, x2_ol)
 ggplot(dft, aes(x = x, y = value, color = as.factor(type))) + geom_line() + facet_wrap(~ key + as.factor(gp))
-# ggsave("./data_clean/plots/toy_C2.pdf", width = 16, height = 14)
+# ggsave("./data_clean/plots/toy_D.pdf", width = 16, height = 14)
 
 
-
-## Split -------------------------------------------------------------------------
+## Split -----------------------------------------------------------------------
 n      <- nrow(X_tmp)
 split1 <- rep(0, n)
 split2 <- rep(0, n)
@@ -169,5 +163,7 @@ data_out <- list(
   gp     = rep(c("T1", "T2"), each = length(x)),
   splits = splits
 )
+toy_D <- data_out
 
-save(data_out, file = "./data/toy_D.RData")
+save(toy_D, file = "./data/toy_D.RData")
+

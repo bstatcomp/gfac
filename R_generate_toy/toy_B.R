@@ -170,5 +170,6 @@ data_out <- list(
   gp     = rep(c("T1", "T2"), each = length(x)),
   splits = splits
 )
+toy_B <- data_out
 
-save(data_out, file = "./data/toy_B.RData")
+save(toy_B, file = "./data/toy_B.RData")

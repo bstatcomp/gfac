@@ -143,7 +143,7 @@ x2_ol <- cbind(x_out_long, type = "Poisson")
 ## Poisson vs mean
 dft <- rbind(x1_ol, x2_ol)
 ggplot(dft, aes(x = x, y = value, color = as.factor(type))) + geom_line() + facet_wrap(~ key + as.factor(gp))
-# ggsave("./data_clean/plots/toy_J.pdf", width = 16, height = 14)
+# ggsave("./data_clean/plots/toy_L.pdf", width = 16, height = 14)
 
 
 ## Split -----------------------------------------------------------------------
@@ -165,5 +165,6 @@ data_out <- list(
   gp     = rep(c("T1", "T2"), each = length(x)),
   splits = splits
 )
+toy_L <- data_out
 
-save(data_out, file = "./data/toy_L.RData")
+save(toy_L, file = "./data/toy_L.RData")

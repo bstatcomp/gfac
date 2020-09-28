@@ -4,6 +4,7 @@ my_path <- dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(my_path)
 setwd("..")
 
+
 # Functions
 se_kernel <- function(x, y, alpha1 = 1, rho1) {
   alpha1 * exp(- (x - y)^2 / (2 * rho1^2))
@@ -59,7 +60,7 @@ plot(F5 * 4, type = "l")
 plot(F6, type = "l")
 
 
-F_mat <- as.matrix(data.frame(D1 = c(F1, F4), D2 = c(F2 * 4, F5 * 4), D3 = c(F3, F6)))
+F_mat <- as.matrix(data.frame(D1 = c(F1, F4), D2 = c(F2 * 3, F5 * 3), D3 = c(F3, F6)))
 
 # we also need base measure
 
@@ -146,7 +147,7 @@ x2_ol <- cbind(x_out_long, type = "Poisson")
 ## Poisson vs mean
 dft <- rbind(x1_ol, x2_ol)
 ggplot(dft, aes(x = x, y = value, color = as.factor(type))) + geom_line() + facet_wrap(~ key + as.factor(gp))
-# ggsave("./data_clean/plots/toy_B2.pdf", width = 16, height = 14)
+ggsave("./data_clean/plots/toy_C.pdf", width = 16, height = 14)
 
 
 
@@ -169,5 +170,6 @@ data_out <- list(
   gp     = rep(c("T1", "T2"), each = length(x)),
   splits = splits
 )
+toy_C <- data_out
 
-save(data_out, file = "./data/toy_C.RData")
+save(toy_C, file = "./data/toy_C.RData")
