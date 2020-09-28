@@ -6,7 +6,10 @@
 \alias{gfac}
 \title{The 'gfac' package.}
 \description{
-A DESCRIPTION OF THE PACKAGE
+The package contains several factor analysis methods, with
+emphasis to count data. The main methods rely on copulas to estimate the
+residual covariance, not explained by the latent structure. Additionally, the
+package contains several data sets for empirical evaluation. Methods use RStan for inference.
 }
 \references{
 Stan Development Team (2019). RStan: the R interface to Stan. R package version 2.19.2. https://mc-stan.org

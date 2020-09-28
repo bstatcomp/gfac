@@ -10,19 +10,27 @@ using namespace Rcpp;
 RcppExport SEXP _rcpp_module_boot_stan_fit4FA_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4corr_est_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gFA_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4gGPFA_LP_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4gMVNGPFA_LP_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gNBFA_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gNBGPFAC_LP_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gNBGPFA_LP_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4gNBGPR_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4gPFA_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4gPGPFA_LP_mod();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_stan_fit4FA_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4FA_mod, 0},
     {"_rcpp_module_boot_stan_fit4corr_est_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4corr_est_mod, 0},
     {"_rcpp_module_boot_stan_fit4gFA_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gFA_mod, 0},
+    {"_rcpp_module_boot_stan_fit4gGPFA_LP_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gGPFA_LP_mod, 0},
+    {"_rcpp_module_boot_stan_fit4gMVNGPFA_LP_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gMVNGPFA_LP_mod, 0},
     {"_rcpp_module_boot_stan_fit4gNBFA_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gNBFA_mod, 0},
     {"_rcpp_module_boot_stan_fit4gNBGPFAC_LP_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gNBGPFAC_LP_mod, 0},
     {"_rcpp_module_boot_stan_fit4gNBGPFA_LP_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gNBGPFA_LP_mod, 0},
+    {"_rcpp_module_boot_stan_fit4gNBGPR_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gNBGPR_mod, 0},
     {"_rcpp_module_boot_stan_fit4gPFA_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gPFA_mod, 0},
+    {"_rcpp_module_boot_stan_fit4gPGPFA_LP_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gPGPFA_LP_mod, 0},
     {NULL, NULL, 0}
 };
 
