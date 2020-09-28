@@ -10,7 +10,7 @@ Download the contents of the package to a local folder. Then use
 ```{r eval = FALSE}
 devtools::install("path", quick = TRUE)
 ``` 
-where path is the path to the folder where you saved the contents of the package. The parameter `quick = TRUE` allows to install already compiled models in the package. If you want to re-compile the models on your computer, you can install the package directly from git with
+where path is the path to the folder where you saved the contents of the package. The parameter `quick = TRUE` allows to install already compiled 64-bit models in the package. If you want to re-compile the models on your computer, you can install the package directly from git with
 
 ```{r eval = FALSE}
 devtools::install_github("bstatcomp/gfac")
