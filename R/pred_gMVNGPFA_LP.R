@@ -1,10 +1,10 @@
-#' Evaluates a Gaussian process factor analysis model
+#' Evaluates a Gaussian process factor analysis model with full covariance
 #'
-#' This function evaluates a Gaussian process factor analysis model on test data. Additionally,
+#' This function evaluates a Gaussian process factor analysis model with full covariance on test data. Additionally,
 #' it provides generated quantities for the test data.
 #'
 #' @export
-#' @param mod list. Output of \code{train_gGPFA_LP}.
+#' @param mod list. Output of \code{train_gMVNGPFA_LP}.
 #' @param X_test data frame. The test data set, consisting of counts. Columns represent variables, rows represent observations.
 #' @param ts_test vector. Time-points of observations in X_test.
 #' @param ts_train vector. Time-points of observations in X_train.
@@ -15,7 +15,7 @@
 #' @return A list.
 #' \item{data}{Generated quantities for test data.}
 #' \item{log_scores}{Point-wise log scores.}
-pred_gGPFA_LP <- function (mod, X_test, ts_test, gp_test, ts_train, gp_train, transform_t, period_length) {
+pred_gMVNGPFA_LP <- function (mod, X_test, ts_test, gp_test, ts_train, gp_train, transform_t, period_length) {
   # Generate quantities
   orig_ts_test  <- ts_test
   orig_ts_train <- ts_train
@@ -115,7 +115,7 @@ pred_gGPFA_LP <- function (mod, X_test, ts_test, gp_test, ts_train, gp_train, tr
       tmp_o  <- sweep(tmp_mu, 1, base_tmp, FUN = "+")
       tmp_o  <- sweep(tmp_o, 1, tsd, FUN = "*")
       tmp_o  <- sweep(tmp_o, 1, tmean, FUN = "+")
-
+      
       mu2[i, ,g_ind] <- exp(tmp_o)
     }
   }
@@ -132,18 +132,21 @@ pred_gGPFA_LP <- function (mod, X_test, ts_test, gp_test, ts_train, gp_train, tr
   # Evaluate
   smod    <- mod$trained_model$samps
   ext     <- rstan::extract(smod)
-  nsigmas <- ext$sigma
+  nsigmas <- ext$L_sigma
   my_scales <- attr(mod$trained_model$data$X, "scaled:scale")
   nsigmas <- sweep(nsigmas, 2, my_scales, "*")
+  L_Omega <- ext$L_Omega
   test_df <- data.frame(ts = ts_test, gp = gp_test)
-  gqs  <- mod$generated_quantities
-  ext  <- rstan::extract(mod$trained_model$samps)
+  gqs <- mod$generated_quantities
+  ext <- rstan::extract(mod$trained_model$samps)
+  
   mus1 <- gqs$mu2
   ts   <- gqs$ts
   gp   <- gqs$gp
   
   n   <- dim(mus1)[3]
   nit <- dim(mus1)[1]
+  MAE_mat <- matrix(data = NA, nrow = nrow(X_test), ncol = nit)
   LS_mat  <- matrix(data = NA, nrow = nrow(X_test), ncol = nit)
   for (i in 1:nit) {
     mus <- t(mus1[i, , ])
@@ -152,17 +155,20 @@ pred_gGPFA_LP <- function (mod, X_test, ts_test, gp_test, ts_train, gp_train, tr
     test_df$gp <- as.character(test_df$gp)
     spreds     <- left_join(test_df, pred_df)
     X_pred     <- spreds[ ,-which(colnames(spreds) %in% c("ts", "gp"))]
-    sc <- vector(mode = "numeric", length = nrow(X_test))
+    sc        <- vector(mode = "numeric", length = nrow(X_test))
+    tmp_Sigma <- diag(nsigmas[i, ]) %*% L_Omega[i, , ]
+    tmp_Sigma <- tmp_Sigma %*% t(tmp_Sigma)
     for (j in 1:length(sc)) {
       n   <- 100
       tmp <- 0
       for (k in 1:n) {
         u   <- runif(ncol(X_test), as.numeric(X_test[j, ]) - 0.5, as.numeric(X_test[j, ]) + 0.5)
-        tmp <- tmp + prod(dnorm(u, mean = as.numeric(X_pred[j, ]), sd = nsigmas[i, ], log = F))
+        tmp <- tmp + mvtnorm::dmvnorm(u, mean = as.numeric(X_pred[j, ]), sigma = tmp_Sigma, log = F)
       }
       sc[j] <- tmp / n
     }
     LS_mat[ ,i]  <- sc
+    
   }
   LS     <- log(apply(LS_mat, 1, mean))
   
